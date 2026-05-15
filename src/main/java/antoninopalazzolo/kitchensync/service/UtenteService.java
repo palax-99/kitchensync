@@ -3,6 +3,7 @@ package antoninopalazzolo.kitchensync.service;
 import antoninopalazzolo.kitchensync.entity.Utente;
 import antoninopalazzolo.kitchensync.exception.BadRequestException;
 import antoninopalazzolo.kitchensync.exception.NotFoundException;
+import antoninopalazzolo.kitchensync.exception.UnauthorizedException;
 import antoninopalazzolo.kitchensync.repository.UtenteRepository;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,13 @@ public class UtenteService {
             throw new BadRequestException("Email " + utente.getEmail() + " già in uso.");
         }
         return utenteRepository.save(utente);
+    }
+
+    // Cerco un utente per email — lo uso nel login.
+// Se non lo trovo lancio UnauthorizedException così non rivelo
+// se l'email esiste o no a chi tenta di indovinare.
+    public Utente findByEmail(String email) {
+        return utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new UnauthorizedException("Credenziali non valide."));
     }
 }
