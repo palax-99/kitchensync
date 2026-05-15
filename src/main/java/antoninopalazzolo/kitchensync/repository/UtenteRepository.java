@@ -12,4 +12,6 @@ public interface UtenteRepository extends JpaRepository<Utente, UUID> {
 
     // Mi serve per il login — cerco l'utente per email
     Optional<Utente> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

@@ -1,5 +1,6 @@
 package antoninopalazzolo.kitchensync.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ public class Utente implements UserDetails {
     private String email;
 
     // Verrà hashata con BCrypt nel service — mai salvata in chiaro
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
