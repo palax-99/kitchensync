@@ -24,6 +24,13 @@ Progetto in sviluppo attivo. README completo in arrivo a fine sviluppo.
 
 ![Login con JWT](docs/screenshots/login.png)
 
+### Crea utente — `POST /utenti`
+
+Endpoint protetto, accessibile solo al SUPER_ADMIN. Permette di creare nuovi ADMIN o METRE assegnando uno o più ruoli
+contemporaneamente.
+
+![Crea utente con ruoli multipli](docs/screenshots/crea-utente.png)
+
 ## Autore
 
 **Antonino Palazzolo** — Capstone Project Epicode

@@ -1,6 +1,7 @@
 package antoninopalazzolo.kitchensync.service;
 
 import antoninopalazzolo.kitchensync.entity.Ruolo;
+import antoninopalazzolo.kitchensync.exception.BadRequestException;
 import antoninopalazzolo.kitchensync.repository.RuoloRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +20,13 @@ public class RuoloService {
     public Ruolo findOrCreate(String denominazione) {
         return ruoloRepository.findByDenominazione(denominazione)
                 .orElseGet(() -> ruoloRepository.save(new Ruolo(denominazione)));
+    }
+
+    // Cerco un ruolo per denominazione — se non esiste lancio errore.
+// Lo uso quando il SUPER_ADMIN assegna ruoli durante la creazione utenti:
+// i ruoli validi sono solo quelli creati dal Runner all'avvio.
+    public Ruolo findByDenominazione(String denominazione) {
+        return ruoloRepository.findByDenominazione(denominazione)
+                .orElseThrow(() -> new BadRequestException("Ruolo " + denominazione + " non valido."));
     }
 }

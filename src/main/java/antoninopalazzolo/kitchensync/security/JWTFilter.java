@@ -1,6 +1,7 @@
 package antoninopalazzolo.kitchensync.security;
 
 import antoninopalazzolo.kitchensync.entity.Utente;
+import antoninopalazzolo.kitchensync.service.UtenteRuoloService;
 import antoninopalazzolo.kitchensync.service.UtenteService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,10 +25,14 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTTools jwtTools;
     private final UtenteService utenteService;
+    private final UtenteRuoloService utenteRuoloService;
 
-    public JWTFilter(JWTTools jwtTools, UtenteService utenteService) {
+    public JWTFilter(JWTTools jwtTools,
+                     UtenteService utenteService,
+                     UtenteRuoloService utenteRuoloService) {
         this.jwtTools = jwtTools;
         this.utenteService = utenteService;
+        this.utenteRuoloService = utenteRuoloService;
     }
 
     @Override
@@ -56,12 +61,11 @@ public class JWTFilter extends OncePerRequestFilter {
         // Recupero l'utente dal database tramite l'id
         Utente utente = utenteService.findById(utenteId);
 
-        // Carico i ruoli dell'utente direttamente dal database —
-        // evito la bidirezionalità in Utente e gestisco i ruoli qui
-        List<SimpleGrantedAuthority> authorities = utente.getAuthorities()
-                .stream()
-                .map(a -> new SimpleGrantedAuthority(a.getAuthority()))
-                .toList();
+
+        // Carico i ruoli direttamente dal database tramite UtenteRuoloService.
+        // Evito la bidirezionalità in Utente — più pulito e niente loop di serializzazione.
+        List<SimpleGrantedAuthority> authorities = utenteRuoloService.getAuthoritiesByUtente(utente);
+        
 
         // Creo l'oggetto di autenticazione e lo metto nel SecurityContext —
         // da questo momento Spring Security sa chi è l'utente loggato
