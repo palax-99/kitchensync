@@ -32,10 +32,11 @@ public class SecurityConfig {
                 // Disabilito le sessioni — con JWT ogni richiesta è stateless
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Tutte le richieste devono essere autenticate —
-                // le eccezioni le gestisco in shouldNotFilter del JWTFilter
-                .authorizeHttpRequests(auth ->
-                        auth.anyRequest().authenticated())
+                // Le rotte /auth sono pubbliche (login e registrazione)
+                // tutto il resto richiede autenticazione
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated())
                 // Aggiungo il mio JWTFilter prima del filtro standard di Spring Security
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

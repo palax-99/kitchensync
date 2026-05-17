@@ -21,7 +21,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // Riceve email e password, ritorna il token JWT.
+    // Ricevo email e password, ritorno il token JWT.
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody @Valid LoginDTO body) {
         String token = authService.login(body);
