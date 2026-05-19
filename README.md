@@ -31,6 +31,24 @@ contemporaneamente.
 
 ![Crea utente con ruoli multipli](docs/screenshots/crea-utente.png)
 
+## Gestione errori centralizzata
+
+Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
+pulito con messaggio e timestamp. Status code semanticamente corretti per ogni tipo di errore.
+
+### Errore di credenziali
+
+Stesso endpoint, email inesistente → risposta strutturata, status `401 Unauthorized`.
+
+![Errore gestito](docs/screenshots/errore-gestito.png)
+
+### Errore di validazione
+
+Email malformata e password vuota → tutti gli errori di validazione raccolti in un unico messaggio, status
+`400 Bad Request`.
+
+![Errore di validazione](docs/screenshots/errore-validazione.png)
+
 ## Autore
 
 **Antonino Palazzolo** — Capstone Project Epicode
