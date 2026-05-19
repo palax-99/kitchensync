@@ -63,6 +63,15 @@ Email malformata e password vuota → tutti gli errori di validazione raccolti i
 
 ![Errore di validazione](docs/screenshots/errore-validazione.png)
 
+## 📚 Documentazione API — Swagger
+
+Tutta l'API è documentata con OpenAPI 3.1 e Swagger UI. Aggiunta una configurazione dedicata per l'autorizzazione Bearer
+Token, così ogni endpoint protetto può essere testato direttamente dal browser senza Postman.
+
+**Disponibile su:** `http://localhost:3001/swagger-ui.html`
+
+![Swagger UI con autenticazione Bearer](docs/screenshots/swagger-overwie.png)
+
 ## Autore
 
 **Antonino Palazzolo** — Capstone Project Epicode

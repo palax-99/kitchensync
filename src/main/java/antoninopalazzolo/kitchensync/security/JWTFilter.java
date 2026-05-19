@@ -1,6 +1,7 @@
 package antoninopalazzolo.kitchensync.security;
 
 import antoninopalazzolo.kitchensync.entity.Utente;
+import antoninopalazzolo.kitchensync.exception.UnauthorizedException;
 import antoninopalazzolo.kitchensync.service.UtenteRuoloService;
 import antoninopalazzolo.kitchensync.service.UtenteService;
 import jakarta.servlet.FilterChain;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,48 +42,61 @@ public class JWTFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // Leggo l'header Authorization dalla richiesta
         String authHeader = request.getHeader("Authorization");
 
-        // Se manca o non inizia con "Bearer " blocco tutto con 401
+        // Se manca o non inizia con "Bearer " rispondo con JSON pulito
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token mancante");
+            writeErrorResponse(response, "Token mancante o malformato.");
             return;
         }
 
-        // Tolgo "Bearer " e tengo solo il token
         String token = authHeader.replace("Bearer ", "");
 
-        // Verifico che il token sia valido — se non lo è lancia UnauthorizedException
-        jwtTools.verifyToken(token);
+        try {
+            // Verifico il token, estraggo l'id, recupero l'utente, carico i ruoli
+            jwtTools.verifyToken(token);
+            UUID utenteId = jwtTools.extractIdFromToken(token);
+            Utente utente = utenteService.findById(utenteId);
 
-        // Estraggo l'id dell'utente dal token
-        UUID utenteId = jwtTools.extractIdFromToken(token);
+            List<SimpleGrantedAuthority> authorities = utenteRuoloService.getAuthoritiesByUtente(utente);
 
-        // Recupero l'utente dal database tramite l'id
-        Utente utente = utenteService.findById(utenteId);
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(utente, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
+            filterChain.doFilter(request, response);
 
-        // Carico i ruoli direttamente dal database tramite UtenteRuoloService.
-        // Evito la bidirezionalità in Utente — più pulito e niente loop di serializzazione.
-        List<SimpleGrantedAuthority> authorities = utenteRuoloService.getAuthoritiesByUtente(utente);
-        
-
-        // Creo l'oggetto di autenticazione e lo metto nel SecurityContext —
-        // da questo momento Spring Security sa chi è l'utente loggato
-        UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(utente, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        // Passo la richiesta al prossimo filtro nella catena
-        filterChain.doFilter(request, response);
+        } catch (UnauthorizedException ex) {
+            // Token scaduto, firma sbagliata, formato invalido
+            writeErrorResponse(response, ex.getMessage());
+        } catch (Exception ex) {
+            // Qualunque altra cosa imprevista
+            writeErrorResponse(response, "Errore di autenticazione.");
+        }
     }
 
-    // Escludo dal filtro le rotte pubbliche — login e OPTIONS per CORS
+    // Scrivo manualmente una response JSON con lo stesso formato dell'ErrorsHandler
+    private void writeErrorResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String json = String.format(
+                "{\"message\":\"%s\",\"timestamp\":\"%s\"}",
+                message,
+                LocalDateTime.now()
+        );
+        response.getWriter().write(json);
+    }
+
+    // Escludo dal filtro le rotte pubbliche — login, Swagger e OPTIONS per CORS
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         return request.getMethod().equals("OPTIONS")
-                || path.startsWith("/auth");
+                || path.startsWith("/auth")
+                || path.startsWith("/swagger-ui")
+                || path.equals("/swagger-ui.html")
+                || path.startsWith("/v3/api-docs");
     }
 }
