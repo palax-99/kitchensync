@@ -8,6 +8,10 @@ import antoninopalazzolo.kitchensync.exception.UnauthorizedException;
 import antoninopalazzolo.kitchensync.payload.NuovoUtenteDTO;
 import antoninopalazzolo.kitchensync.payload.UtenteResponseDTO;
 import antoninopalazzolo.kitchensync.repository.UtenteRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,5 +112,14 @@ public class UtenteService {
                 utente.getAvatar(),
                 denominazioni
         );
+    }
+
+    // Restituisco la lista paginata degli utenti.
+    // Costruisco il Pageable da page, size e sortBy ricevuti dal controller.
+    public Page<UtenteResponseDTO> findAll(int page, int size, String sortBy) {
+        if (size > 50) size = 50; // Limito la dimensione massima per non sovraccaricare
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return utenteRepository.findAll(pageable)
+                .map(this::toResponseDTO);
     }
 }

@@ -31,6 +31,20 @@ contemporaneamente.
 
 ![Crea utente con ruoli multipli](docs/screenshots/crea-utente.png)
 
+### Get me — `GET /utenti/me`
+
+L'utente loggato recupera i propri dati. Spring Security passa direttamente l'oggetto `Utente` tramite
+`@AuthenticationPrincipal`, niente query, niente parametri.
+
+![Get me](docs/screenshots/Get-me.png)
+
+### Lista utenti — `GET /utenti`
+
+Endpoint protetto, solo SUPER_ADMIN. Restituisce la lista paginata degli utenti con parametri `page`, `size` (max 30) e
+`sortBy`.
+
+![Lista utenti paginata](docs/screenshots/lista-utenti.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
