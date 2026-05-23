@@ -59,6 +59,10 @@ Endpoint protetto, solo SUPER_ADMIN. Restituisce la lista paginata delle sezioni
 
 ![Lista sezioni paginata](docs/screenshots/lista-sezioni.png)
 
+Dalla Slice 3 è possibile assegnare una sezione all'utente ADMIN al momento della creazione.
+
+![Crea utente con sezione](docs/screenshots/crea-utente-con-sezione.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
@@ -82,6 +86,18 @@ Email malformata e password vuota → tutti gli errori di validazione raccolti i
 Nome duplicato → risposta strutturata, status `400 Bad Request`.
 
 ![Sezione duplicata](docs/screenshots/messaggio-errore-sezione.png)
+
+### Sezione non trovata
+
+Id sezione inesistente durante la creazione utente → risposta strutturata, status `404 Not Found`.
+
+![Sezione non trovata](docs/screenshots/crea-tente-con-sezione-id-sbagliato.png)
+
+### Email duplicata con sezione
+
+Email già in uso durante la creazione utente con sezione → risposta strutturata, status `400 Bad Request`.
+
+![Email duplicata](docs/screenshots/crea-utente-con-sezione-email-duplicata.png)
 
 ## 📚 Documentazione API — Swagger
 

@@ -12,6 +12,8 @@ public record UtenteResponseDTO(
         String cognome,
         String email,
         String avatar,
-        List<String> ruoli
+        List<String> ruoli,
+        // La sezione è null per SUPER_ADMIN e METRE
+        SezioneResponseDTO sezione
 ) {
 }

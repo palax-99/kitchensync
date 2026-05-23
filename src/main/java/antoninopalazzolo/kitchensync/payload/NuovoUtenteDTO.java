@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
+import java.util.UUID;
 
 // Dati che ricevo quando il SUPER_ADMIN crea un nuovo utente.
 public record NuovoUtenteDTO(
@@ -27,6 +28,9 @@ public record NuovoUtenteDTO(
         // Lista dei ruoli da assegnare — almeno uno obbligatorio.
         // Accetto i nomi dei ruoli come stringhe (es. ["ADMIN", "METRE"])
         @NotEmpty(message = "Almeno un ruolo è obbligatorio")
-        List<String> ruoli
+        List<String> ruoli,
+
+        // Id della sezione — obbligatorio solo per gli ADMIN, per SUPER_ADMIN e METRE è null
+        UUID sezioneId
 ) {
 }

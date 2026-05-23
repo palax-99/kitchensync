@@ -1,11 +1,13 @@
 package antoninopalazzolo.kitchensync.service;
 
 import antoninopalazzolo.kitchensync.entity.Ruolo;
+import antoninopalazzolo.kitchensync.entity.Sezione;
 import antoninopalazzolo.kitchensync.entity.Utente;
 import antoninopalazzolo.kitchensync.exception.BadRequestException;
 import antoninopalazzolo.kitchensync.exception.NotFoundException;
 import antoninopalazzolo.kitchensync.exception.UnauthorizedException;
 import antoninopalazzolo.kitchensync.payload.NuovoUtenteDTO;
+import antoninopalazzolo.kitchensync.payload.SezioneResponseDTO;
 import antoninopalazzolo.kitchensync.payload.UtenteResponseDTO;
 import antoninopalazzolo.kitchensync.repository.UtenteRepository;
 import org.springframework.data.domain.Page;
@@ -27,23 +29,25 @@ public class UtenteService {
     private final RuoloService ruoloService;
     private final UtenteRuoloService utenteRuoloService;
     private final PasswordEncoder passwordEncoder;
+    private final SezioneService sezioneService;
 
     public UtenteService(UtenteRepository utenteRepository,
                          RuoloService ruoloService,
                          UtenteRuoloService utenteRuoloService,
-                         PasswordEncoder passwordEncoder) {
+                         PasswordEncoder passwordEncoder,
+                         SezioneService sezioneService) {
         this.utenteRepository = utenteRepository;
         this.ruoloService = ruoloService;
         this.utenteRuoloService = utenteRuoloService;
         this.passwordEncoder = passwordEncoder;
+        this.sezioneService = sezioneService;
     }
 
     // Mi serve nel JWTFilter — dato l'id estratto dal token,
     // recupero l'utente dal database.
     public Utente findById(UUID id) {
-        Utente utenteTrovato = utenteRepository.findById(id)
+        return utenteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Utente con id " + id + " non trovato."));
-        return utenteTrovato;
     }
 
     // Controllo se esiste già un utente con questa email
@@ -60,18 +64,19 @@ public class UtenteService {
     }
 
     // Cerco un utente per email — lo uso nel login.
-// Se non lo trovo lancio UnauthorizedException così non rivelo
-// se l'email esiste o no a chi tenta di indovinare.
+    // Se non lo trovo lancio UnauthorizedException così non rivelo
+    // se l'email esiste o no a chi tenta di indovinare.
     public Utente findByEmail(String email) {
         return utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("Credenziali non valide."));
     }
 
     // Creo un nuovo utente partendo dal DTO.
-// 1. Controllo che l'email non sia già in uso
-// 2. Hasho la password con BCrypt
-// 3. Salvo l'utente
-// 4. Per ogni ruolo richiesto lo cerco e lo collego all'utente
+    // 1. Controllo che l'email non sia già in uso
+    // 2. Hasho la password con BCrypt
+    // 3. Se c'è una sezione nel DTO la assegno all'utente
+    // 4. Salvo l'utente
+    // 5. Per ogni ruolo richiesto lo cerco e lo collego all'utente
     @Transactional
     public Utente creaUtente(NuovoUtenteDTO body) {
 
@@ -85,6 +90,13 @@ public class UtenteService {
                 body.email(),
                 passwordEncoder.encode(body.password())
         );
+
+        // Se nel DTO c'è un id sezione, la cerco e la assegno all'utente
+        if (body.sezioneId() != null) {
+            Sezione sezione = sezioneService.trovaPerIdOException(body.sezioneId());
+            nuovoUtente.setSezione(sezione);
+        }
+
         Utente utenteSalvato = utenteRepository.save(nuovoUtente);
 
         // Per ogni denominazione ruolo nel DTO la cerco e la collego all'utente
@@ -97,12 +109,20 @@ public class UtenteService {
     }
 
     // Converto un Utente in UtenteResponseDTO — espongo solo i campi puliti.
-// Recupero i ruoli dell'utente per popolare la lista delle denominazioni.
+    // Recupero i ruoli dell'utente per popolare la lista delle denominazioni.
     public UtenteResponseDTO toResponseDTO(Utente utente) {
         List<String> denominazioni = utenteRuoloService.getAuthoritiesByUtente(utente)
                 .stream()
                 .map(a -> a.getAuthority())
                 .toList();
+
+        // Converto la sezione in SezioneResponseDTO solo se non è null
+        SezioneResponseDTO sezioneDTO = utente.getSezione() != null
+                ? new SezioneResponseDTO(
+                utente.getSezione().getId(),
+                utente.getSezione().getNome(),
+                utente.getSezione().isAttiva())
+                : null;
 
         return new UtenteResponseDTO(
                 utente.getId(),
@@ -110,14 +130,15 @@ public class UtenteService {
                 utente.getCognome(),
                 utente.getEmail(),
                 utente.getAvatar(),
-                denominazioni
+                denominazioni,
+                sezioneDTO
         );
     }
 
     // Restituisco la lista paginata degli utenti.
     // Costruisco il Pageable da page, size e sortBy ricevuti dal controller.
     public Page<UtenteResponseDTO> findAll(int page, int size, String sortBy) {
-        if (size > 50) size = 50; // Limito la dimensione massima per non sovraccaricare
+        if (size > 30) size = 30;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return utenteRepository.findAll(pageable)
                 .map(this::toResponseDTO);

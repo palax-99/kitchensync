@@ -42,6 +42,12 @@ public class Utente implements UserDetails {
     // URL immagine su Cloudinary — opzionale, quindi nessun nullable = false
     private String avatar;
 
+    // La sezione del ristorante a cui è assegnato questo utente.
+    // Nullable perché SUPER_ADMIN e METRE non hanno una sezione propria.
+    @ManyToOne
+    @JoinColumn(name = "sezione_id")
+    private Sezione sezione;
+
     // Costruttore che uso quando creo un nuovo utente.
     // L'id lo genera Hibernate da solo, l'avatar si aggiunge dopo.
     public Utente(String nome, String cognome, String email, String password) {
@@ -49,6 +55,11 @@ public class Utente implements UserDetails {
         this.cognome = cognome;
         this.email = email;
         this.password = password;
+    }
+
+    // Mi serve per assegnare la sezione dopo la creazione dell'utente
+    public void setSezione(Sezione sezione) {
+        this.sezione = sezione;
     }
 
     // Spring Security chiama questo metodo per sapere i permessi dell'utente.
