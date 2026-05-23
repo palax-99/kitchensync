@@ -63,6 +63,19 @@ Dalla Slice 3 è possibile assegnare una sezione all'utente ADMIN al momento del
 
 ![Crea utente con sezione](docs/screenshots/crea-utente-con-sezione.png)
 
+### Crea categoria — `POST /categorie`
+
+Endpoint protetto, accessibile solo all'ADMIN. La categoria viene automaticamente assegnata alla sezione dell'admin
+loggato — niente parametri extra. Il nome deve essere univoco dentro la stessa sezione.
+
+![Crea categoria](docs/screenshots/crea-categoria-con-sezione.png)
+
+### Lista categorie — `GET /categorie`
+
+Endpoint protetto, solo ADMIN. Restituisce le categorie filtrate automaticamente per la sezione dell'admin loggato.
+
+![Lista categorie](docs/screenshots/lista-categorie-con-sezione.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
