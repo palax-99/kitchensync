@@ -45,6 +45,20 @@ Endpoint protetto, solo SUPER_ADMIN. Restituisce la lista paginata degli utenti 
 
 ![Lista utenti paginata](docs/screenshots/lista-utenti.png)
 
+### Crea sezione — `POST /sezioni`
+
+Endpoint protetto, accessibile solo al SUPER_ADMIN. Permette di creare una nuova sezione del ristorante (es. Pizzeria,
+Cucina, Sushi, Bar). Il nome deve essere univoco — se esiste già viene restituito un errore 400.
+
+![Crea sezione](docs/screenshots/crea-sezione.png)
+
+### Lista sezioni — `GET /sezioni`
+
+Endpoint protetto, solo SUPER_ADMIN. Restituisce la lista paginata delle sezioni con parametri `page`, `size` (max 30) e
+`sortBy`. Ordinate alfabeticamente per nome di default.
+
+![Lista sezioni paginata](docs/screenshots/lista-sezioni.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
@@ -62,6 +76,12 @@ Email malformata e password vuota → tutti gli errori di validazione raccolti i
 `400 Bad Request`.
 
 ![Errore di validazione](docs/screenshots/errore-validazione.png)
+
+### Sezione già esistente
+
+Nome duplicato → risposta strutturata, status `400 Bad Request`.
+
+![Sezione duplicata](docs/screenshots/messaggio-errore-sezione.png)
 
 ## 📚 Documentazione API — Swagger
 
