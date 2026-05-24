@@ -90,6 +90,13 @@ ingrediente è `false`, tutti i piatti che lo usano spariscono dal menu vivo.
 
 ![Cambia disponibilità ingrediente](docs/screenshots/cambia-disponibiltà-ingrediente.png)
 
+### Crea piatto — `POST /piatti`
+
+Endpoint protetto, accessibile solo all'ADMIN. Il piatto viene assegnato alla categoria specificata nel body — il
+sistema controlla automaticamente che la categoria appartenga alla sezione dell'admin loggato.
+
+![Crea piatto](docs/screenshots/crea-piatto.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
@@ -131,6 +138,12 @@ Email già in uso durante la creazione utente con sezione → risposta struttura
 Nome già esistente nella stessa sezione → risposta strutturata, status `400 Bad Request`.
 
 ![Ingrediente duplicato](docs/screenshots/ingrediente-duplicato.png)
+
+### Piatto duplicato
+
+Nome già esistente nella stessa categoria → risposta strutturata, status `400 Bad Request`.
+
+![Piatto duplicato](docs/screenshots/piatto-replicato.png)
 
 ## 📚 Documentazione API — Swagger
 
