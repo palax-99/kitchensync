@@ -76,6 +76,20 @@ Endpoint protetto, solo ADMIN. Restituisce le categorie filtrate automaticamente
 
 ![Lista categorie](docs/screenshots/lista-categorie-con-sezione.png)
 
+### Crea ingrediente — `POST /ingredienti`
+
+Endpoint protetto, accessibile solo all'ADMIN. L'ingrediente viene automaticamente assegnato alla sezione dell'admin
+loggato. Il nome deve essere univoco dentro la stessa sezione.
+
+![Crea ingrediente](docs/screenshots/crea-ingrediente.png)
+
+### Cambia disponibilità — `PATCH /ingredienti/{id}/disponibilita`
+
+L'ADMIN può segnare un ingrediente come esaurito con una chiamata minimale — solo un boolean nel body. Quando un
+ingrediente è `false`, tutti i piatti che lo usano spariscono dal menu vivo.
+
+![Cambia disponibilità ingrediente](docs/screenshots/cambia-disponibiltà-ingrediente.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
@@ -111,6 +125,12 @@ Id sezione inesistente durante la creazione utente → risposta strutturata, sta
 Email già in uso durante la creazione utente con sezione → risposta strutturata, status `400 Bad Request`.
 
 ![Email duplicata](docs/screenshots/crea-utente-con-sezione-email-duplicata.png)
+
+### Ingrediente duplicato
+
+Nome già esistente nella stessa sezione → risposta strutturata, status `400 Bad Request`.
+
+![Ingrediente duplicato](docs/screenshots/ingrediente-duplicato.png)
 
 ## 📚 Documentazione API — Swagger
 
