@@ -97,6 +97,13 @@ sistema controlla automaticamente che la categoria appartenga alla sezione dell'
 
 ![Crea piatto](docs/screenshots/crea-piatto.png)
 
+### Collega ingrediente a piatto — `POST /piatti-ingredienti`
+
+Endpoint protetto, accessibile solo all'ADMIN. Collega un ingrediente a un piatto — il sistema controlla che
+appartengano alla stessa sezione e che il collegamento non esista già.
+
+![Collegamento piatto ingrediente](docs/screenshots/collegamento-piatto-ingrediente.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
@@ -144,6 +151,12 @@ Nome già esistente nella stessa sezione → risposta strutturata, status `400 B
 Nome già esistente nella stessa categoria → risposta strutturata, status `400 Bad Request`.
 
 ![Piatto duplicato](docs/screenshots/piatto-replicato.png)
+
+### Collegamento duplicato
+
+Ingrediente già collegato allo stesso piatto → risposta strutturata, status `400 Bad Request`.
+
+![Collegamento duplicato](docs/screenshots/errore-duplicato.png)
 
 ## 📚 Documentazione API — Swagger
 
