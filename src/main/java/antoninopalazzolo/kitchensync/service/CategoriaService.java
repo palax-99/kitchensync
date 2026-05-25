@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,5 +56,10 @@ public class CategoriaService {
     public void elimina(UUID id) {
         Categoria categoria = trovaPerIdOException(id);
         categoriaRepository.delete(categoria);
+    }
+
+    // Mi serve nel menu vivo — prendo tutte le categorie di una sezione senza paginazione
+    public List<Categoria> findBySezione(Sezione sezione) {
+        return categoriaRepository.findBySezione(sezione);
     }
 }

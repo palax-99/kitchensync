@@ -38,7 +38,7 @@ public class RuoliRunner implements CommandLineRunner {
         // Creo i tre ruoli se non esistono già
         Ruolo superAdmin = ruoloService.findOrCreate("SUPER_ADMIN");
         ruoloService.findOrCreate("ADMIN");
-        ruoloService.findOrCreate("METRE");
+        Ruolo metre = ruoloService.findOrCreate("METRE");
 
         // Creo il SUPER_ADMIN di default se non esiste già
         if (!utenteService.existsByEmail("superadmin@kitchensync.com")) {
@@ -49,9 +49,19 @@ public class RuoliRunner implements CommandLineRunner {
                     passwordEncoder.encode("superadmin123")
             );
             Utente saSalvato = utenteService.save(sa);
-
-            // Collego il ruolo SUPER_ADMIN al SUPER_ADMIN appena salvato
             utenteRuoloService.assegnaRuolo(saSalvato, superAdmin);
+        }
+
+        // Creo il METRE di default se non esiste già
+        if (!utenteService.existsByEmail("metre@kitchensync.com")) {
+            Utente metreUtente = new Utente(
+                    "Metre",
+                    "Sala",
+                    "metre@kitchensync.com",
+                    passwordEncoder.encode("metre123")
+            );
+            Utente metreSalvato = utenteService.save(metreUtente);
+            utenteRuoloService.assegnaRuolo(metreSalvato, metre);
         }
     }
 }

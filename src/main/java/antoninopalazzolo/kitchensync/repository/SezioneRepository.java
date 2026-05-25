@@ -3,6 +3,7 @@ package antoninopalazzolo.kitchensync.repository;
 import antoninopalazzolo.kitchensync.entity.Sezione;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,7 @@ public interface SezioneRepository extends JpaRepository<Sezione, UUID> {
 
     // Mi serve per verificare l'unicità del nome escludendo la sezione che sto modificando
     boolean existsByNome(String nome);
+
+    // Mi serve nel menu vivo — prendo solo le sezioni attive
+    List<Sezione> findByAttiva(boolean attiva);
 }

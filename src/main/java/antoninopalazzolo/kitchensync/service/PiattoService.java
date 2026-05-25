@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -83,5 +84,10 @@ public class PiattoService {
     public void elimina(UUID id) {
         Piatto piatto = trovaPerIdOException(id);
         piattoRepository.delete(piatto);
+    }
+
+    // Mi serve nel menu vivo — prendo tutti i piatti di una categoria senza paginazione
+    public List<Piatto> findByCategoria(Categoria categoria) {
+        return piattoRepository.findByCategoria(categoria);
     }
 }

@@ -104,6 +104,13 @@ appartengano alla stessa sezione e che il collegamento non esista già.
 
 ![Collegamento piatto ingrediente](docs/screenshots/collegamento-piatto-ingrediente.png)
 
+### Menu vivo — `GET /menu`
+
+Endpoint protetto, accessibile solo al METRE e al SUPER_ADMIN. Restituisce il menu completo organizzato per sezione →
+categoria → piatti. Esclude automaticamente le sezioni disattivate e i piatti con almeno un ingrediente non disponibile.
+
+![Menu vivo](docs/screenshots/visualizzazione-menu.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON

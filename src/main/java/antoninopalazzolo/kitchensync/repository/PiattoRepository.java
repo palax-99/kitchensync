@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PiattoRepository extends JpaRepository<Piatto, UUID> {
@@ -15,4 +16,7 @@ public interface PiattoRepository extends JpaRepository<Piatto, UUID> {
 
     // Mi serve per verificare che il nome non sia già usato dentro la stessa categoria
     boolean existsByNomeAndCategoria(String nome, Categoria categoria);
+
+    // Mi serve nel menu vivo — prendo tutti i piatti di una categoria senza paginazione
+    List<Piatto> findByCategoria(Categoria categoria);
 }

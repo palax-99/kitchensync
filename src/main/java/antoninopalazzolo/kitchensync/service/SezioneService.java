@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,5 +60,10 @@ public class SezioneService {
     public void elimina(UUID id) {
         Sezione sezione = trovaPerIdOException(id);
         sezioneRepository.delete(sezione);
+    }
+
+    // Mi serve nel menu vivo — prendo solo le sezioni attive
+    public List<Sezione> trovaTutteAttive() {
+        return sezioneRepository.findByAttiva(true);
     }
 }
