@@ -6,14 +6,15 @@ import antoninopalazzolo.kitchensync.payload.CategoriaResponseDTO;
 import antoninopalazzolo.kitchensync.payload.PiattoDTO;
 import antoninopalazzolo.kitchensync.payload.PiattoResponseDTO;
 import antoninopalazzolo.kitchensync.payload.SezioneResponseDTO;
+import antoninopalazzolo.kitchensync.service.CloudinaryService;
 import antoninopalazzolo.kitchensync.service.PiattoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -21,8 +22,14 @@ import java.util.UUID;
 @RequestMapping("/piatti")
 public class PiattoController {
 
-    @Autowired
+
     private PiattoService piattoService;
+    private CloudinaryService cloudinaryService;
+
+    public PiattoController(PiattoService piattoService, CloudinaryService cloudinaryService) {
+        this.piattoService = piattoService;
+        this.cloudinaryService = cloudinaryService;
+    }
 
     // Lista paginata per categoria — passo il categoriaId come parametro
     @GetMapping
@@ -91,5 +98,15 @@ public class PiattoController {
                 p.getImmagineUrl(),
                 categoriaDTO
         );
+    }
+
+    // Carico l'immagine del piatto su Cloudinary e aggiorno l'URL nel database
+    @PostMapping("/{id}/immagine")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public PiattoResponseDTO uploadImmagine(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        return toResponseDTO(piattoService.aggiornaImmagine(id, cloudinaryService.upload(file)));
     }
 }

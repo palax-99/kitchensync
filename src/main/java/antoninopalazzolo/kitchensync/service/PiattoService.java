@@ -90,4 +90,11 @@ public class PiattoService {
     public List<Piatto> findByCategoria(Categoria categoria) {
         return piattoRepository.findByCategoria(categoria);
     }
+
+    // Aggiorno l'URL dell'immagine dopo l'upload su Cloudinary
+    public Piatto aggiornaImmagine(UUID id, String immagineUrl) {
+        Piatto piatto = trovaPerIdOException(id);
+        piatto.setImmagineUrl(immagineUrl);
+        return piattoRepository.save(piatto);
+    }
 }

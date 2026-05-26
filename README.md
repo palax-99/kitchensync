@@ -111,6 +111,13 @@ categoria → piatti. Esclude automaticamente le sezioni disattivate e i piatti 
 
 ![Menu vivo](docs/screenshots/visualizzazione-menu.png)
 
+### Upload immagine piatto — `POST /piatti/{id}/immagine`
+
+Endpoint protetto, accessibile solo all'ADMIN. Carica l'immagine del piatto su Cloudinary e salva l'URL pubblico nel
+database. La richiesta usa `multipart/form-data` con il campo `file`.
+
+![Upload immagine piatto](docs/screenshots/assegnazione-immagine-a-piatto.png)
+
 ## Gestione errori centralizzata
 
 Tutte le eccezioni del backend vengono catturate da un `ErrorsHandler` con `@RestControllerAdvice` e trasformate in JSON
