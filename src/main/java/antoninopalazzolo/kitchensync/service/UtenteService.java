@@ -143,4 +143,12 @@ public class UtenteService {
         return utenteRepository.findAll(pageable)
                 .map(this::toResponseDTO);
     }
+
+    // Elimino prima i ruoli collegati, poi l'utente
+    @Transactional
+    public void elimina(UUID id) {
+        Utente utente = findById(id);
+        utenteRuoloService.eliminaRuoliUtente(utente);
+        utenteRepository.delete(utente);
+    }
 }

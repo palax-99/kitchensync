@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 // Endpoint per la gestione degli utenti.
 // Tutti gli endpoint qui dentro richiedono autenticazione.
 @RestController
@@ -50,5 +52,13 @@ public class UtenteController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "cognome") String sortBy) {
         return utenteService.findAll(page, size, sortBy);
+    }
+
+    // Elimino un utente — solo SUPER_ADMIN
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public void elimina(@PathVariable UUID id) {
+        utenteService.elimina(id);
     }
 }

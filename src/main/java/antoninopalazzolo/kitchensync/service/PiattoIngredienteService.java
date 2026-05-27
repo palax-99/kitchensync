@@ -60,4 +60,9 @@ public class PiattoIngredienteService {
                 .orElseThrow(() -> new NotFoundException("Collegamento non trovato"));
         piattoIngredienteRepository.delete(piattoIngrediente);
     }
+
+    // Elimino tutti i collegamenti di un ingrediente — serve prima di cancellarlo
+    public void eliminaCollegamentiIngrediente(Ingrediente ingrediente) {
+        piattoIngredienteRepository.deleteByIngrediente(ingrediente);
+    }
 }

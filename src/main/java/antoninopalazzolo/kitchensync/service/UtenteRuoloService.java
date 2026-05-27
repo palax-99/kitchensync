@@ -33,4 +33,9 @@ public class UtenteRuoloService {
                 .map(ur -> new SimpleGrantedAuthority(ur.getRuolo().getDenominazione()))
                 .toList();
     }
+
+    // Elimino tutti i ruoli collegati a un utente — serve prima di eliminare l'utente
+    public void eliminaRuoliUtente(Utente utente) {
+        utenteRuoloRepository.deleteByUtente(utente);
+    }
 }

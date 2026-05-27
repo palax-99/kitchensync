@@ -6,20 +6,27 @@ import antoninopalazzolo.kitchensync.entity.Utente;
 import antoninopalazzolo.kitchensync.exception.BadRequestException;
 import antoninopalazzolo.kitchensync.exception.NotFoundException;
 import antoninopalazzolo.kitchensync.repository.IngredienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import antoninopalazzolo.kitchensync.repository.PiattoIngredienteRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 public class IngredienteService {
 
-    @Autowired
+
+    private final PiattoIngredienteRepository piattoIngredienteRepository;
     private IngredienteRepository ingredienteRepository;
+
+    public IngredienteService(IngredienteRepository ingredienteRepository, PiattoIngredienteRepository piattoIngredienteRepository) {
+        this.ingredienteRepository = ingredienteRepository;
+        this.piattoIngredienteRepository = piattoIngredienteRepository;
+    }
 
     // Lista paginata filtrata per la sezione dell'admin loggato
     public Page<Ingrediente> trovaTutti(Utente adminLoggato, int page, int size, String sortBy) {
@@ -58,9 +65,11 @@ public class IngredienteService {
         return ingredienteRepository.save(ingrediente);
     }
 
-    // Cancello per id — prima verifico che esista
+    // Elimino prima i collegamenti piatto-ingrediente, poi l'ingrediente
+    @Transactional
     public void elimina(UUID id) {
         Ingrediente ingrediente = trovaPerIdOException(id);
+        piattoIngredienteRepository.deleteByIngrediente(ingrediente);
         ingredienteRepository.delete(ingrediente);
     }
 }

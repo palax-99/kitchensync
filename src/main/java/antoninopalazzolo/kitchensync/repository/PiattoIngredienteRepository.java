@@ -19,4 +19,7 @@ public interface PiattoIngredienteRepository extends JpaRepository<PiattoIngredi
 
     // Mi serve in una funzione dell'applicazione che implemneterò successivamente — trovo tutti i piatti che usano un certo ingrediente
     List<PiattoIngrediente> findByIngrediente(Ingrediente ingrediente);
+
+    // Mi serve per eliminare tutti i collegamenti di un ingrediente prima di cancellarlo
+    void deleteByIngrediente(Ingrediente ingrediente);
 }
