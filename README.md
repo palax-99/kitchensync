@@ -14,9 +14,35 @@ cucina, pizzeria, sushi, bar) tenendo sincronizzati menu, ingredienti e personal
 - PostgreSQL + JPA/Hibernate
 - React + Vite *(in arrivo)*
 
-## Stato
+## Modello dati
 
-Progetto in sviluppo attivo. README completo in arrivo a fine sviluppo.
+La V1 copre autenticazione, menu vivo e gestione utenti.
+Tutti gli id sono UUID. Nessun `@ManyToMany` — ogni relazione many-to-many
+è implementata con una tabella di mezzo esplicita con due `@ManyToOne`.
+
+![Diagramma V1](docs/screenshots/diagramma-v1.webp)
+
+### Sezioni
+
+I reparti del ristorante (Pizzeria, Cucina, Sushi, Bar). Il flag `attiva`
+permette di disattivare un reparto senza eliminarlo.
+
+### Ingredienti
+
+Il flag `disponibile` è il cuore del menu vivo: quando un ingrediente è
+esaurito, tutti i piatti che lo contengono spariscono automaticamente dal
+menu senza toccare il database.
+
+### piatti_ingredienti
+
+Tabella di mezzo esplicita tra `piatti` e `ingredienti`. Ogni riga dice
+"questo piatto contiene questo ingrediente" — è questa tabella che permette
+al sistema di calcolare quali piatti escludere dal menu vivo.
+
+### utenti_ruoli
+
+Tabella di mezzo esplicita tra `utenti` e `ruoli`. Un utente può avere
+più ruoli contemporaneamente.
 
 ## Endpoint testati
 
@@ -180,6 +206,10 @@ Token, così ogni endpoint protetto può essere testato direttamente dal browser
 **Disponibile su:** `http://localhost:3001/swagger-ui.html`
 
 ![Swagger UI con autenticazione Bearer](docs/screenshots/swagger-overwie.png)
+
+## Frontend
+
+Il frontend React è disponibile su: [kitchensync-frontend](https://github.com/palax-99/kitchensync-frontend)
 
 ## Autore
 
